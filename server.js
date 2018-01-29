@@ -11,11 +11,26 @@ const app = express();
 app.use(express.static('public'));
 
 app.get('/v1/notes', (req, res) => {
+  /*
+  const queryString = req.query.searchTerm;
+  let notes = data.filter( note => note.title.includes(queryString) );
+  res.json(notes);
+  */
+
+  /* 
+  checked the solution branch and it has the option to show all of the notes if there isn't an active search term...which entirely makes sense. so that I'm not just copying the solution, I'll write out an if/else.
+  */
+  
   const queryString = req.query.searchTerm;
   // 'data' is pulled from line 3, which links to the file with the 10 notes
-  let notes = data.filter( note => note.title.includes(queryString)
-  );
-  res.json(notes);
+  let notes = data.filter( note => note.title.includes(queryString) );
+
+  if (queryString) {
+    res.json(notes);
+  } else {
+    res.json(data);
+  }
+
 });
 
 app.get('/v1/notes/:id', (req, res) => {
