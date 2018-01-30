@@ -66,7 +66,7 @@ const noteful = (function () {
 
   function handleNoteFormSubmit() {
     $('.js-note-edit-form').on('submit', function (event) {
-      event.preventDefault();
+      event.preventDefault(); // when this is commented out it DOES refresh the page, but may cause other errors down the road.
 
       const editForm = $(event.currentTarget);
 
@@ -80,7 +80,11 @@ const noteful = (function () {
       api.update(noteObj.id, noteObj, updateResponse => {
         store.currentNote = updateResponse;
 
-        render();
+        api.search(store.currentSearchTerm, updateResponse => {
+          store.notes = updateResponse;
+
+          render();
+        });
       });
 
     });
