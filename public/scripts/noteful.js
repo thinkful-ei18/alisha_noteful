@@ -35,6 +35,7 @@ const noteful = (function () {
   /**
    * EVENT LISTENERS AND HANDLERS
    */
+
   function handleNoteItemClick() {
     $('.js-notes-list').on('click', '.js-note-show-link', event => {
       event.preventDefault();
@@ -63,9 +64,32 @@ const noteful = (function () {
     });
   }
 
+  function handleNoteFormSubmit() {
+    $('.js-note-edit-form').on('submit', function (event) {
+      event.preventDefault();
+
+      const editForm = $(event.currentTarget);
+
+      const noteObj = {
+        title: editForm.find('.js-note-title-entry').val(),
+        content: editForm.find('.js-note-content-entry').val()
+      };
+
+      noteObj.id = store.currentNote.id;
+
+      api.update(noteObj.id, noteObj, updateResponse => {
+        store.currentNote = updateResponse;
+
+        render();
+      });
+
+    });
+  }
+
   function bindEventListeners() {
     handleNoteItemClick();
     handleNoteSearchSubmit();
+    handleNoteFormSubmit();
   }
 
   // This object contains the only exposed methods from this module:

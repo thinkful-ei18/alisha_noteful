@@ -1,6 +1,8 @@
 'use strict';
 
 const data = require('./db/notes');
+const simDB = require('./db/simDB');
+const notes = simDB.initialize(data);
 
 console.log('hello world!');
 
@@ -11,38 +13,66 @@ const {PORT} = require('./config');
 const {logger} = require('./middlewares/logger');
 
 app.use(express.static('public'));
+app.use(express.json());
 
 app.use(logger);
 
-app.get('/v1/notes', (req, res) => {
-  /*
+app.get('/v1/notes', (req, res, next) => {
+
   const queryString = req.query.searchTerm;
-  let notes = data.filter( note => note.title.includes(queryString) );
-  res.json(notes);
-  */
-
-  /* 
-  checked the solution branch and it has the option to show all of the notes if there isn't an active search term...which entirely makes sense. so that I'm not just copying the solution, I'll write out an if/else.
-  */
-  
-  const queryString = req.query.searchTerm;
-  // 'data' is pulled from line 3, which links to the file with the 10 notes
-  let notes = data.filter( note => note.title.includes(queryString) );
-
-  if (queryString) {
-    res.json(notes);
-  } else {
-    res.json(data);
-  }
-
+  notes.filter(queryString, (err, list) => {
+    if (err) {
+      return next(err);
+    }
+    res.json(list);
+  });
 });
 
-app.get('/v1/notes/:id', (req, res) => {
+app.get('/v1/notes/:id', (req, res, next) => {
   // the URL is always a string! 
   const id = parseInt(req.params.id);
   // if the parseInt() wasn't used, the below would be comparing a number to a string.
-  const note = data.find(item => item.id === id); 
-  res.json(note);
+  // const note = data.find(item => item.id === id); 
+  // res.json(note);
+
+  notes.find(id, (err, item) => {
+    if (err) {
+      return next(err);
+    }
+    if (item) {
+      res.json(item);
+    } else {
+      res.json('not found');
+    }
+  });
+});
+
+app.put('/v1/notes/:id', (req, res, next) => {
+  const id = req.params.id; 
+
+  /***** Never trust users - validate input *****/
+  const updateObj = {};
+  const updateFields = ['title', 'content']; // these are key names in each note object
+
+  // this locates the updated info from the req body
+  updateFields.forEach(field => { // iterate over the 2 fields above
+    if (field in req.body) { // if the current field is in the req.body that was sent in the PUT method...(which contains updated content)
+      updateObj[field] = req.body[field]; // then assign the key/field inside the empty updateObg to the value of the updated field in the req body.
+      // i.e., if the title was updated, then updateObj = {title: 'new title'}
+    }
+  });
+
+  // this passes that updated info to the client
+  notes.update(id, updateObj, (err, item) => { // item is defined on line 76 of simDB.js. it's the note that matches the id that was passed in
+    if (err) { // if there's an error
+      return next(err); // give that error to the error handler below
+    }
+    if (item) { // if there is a valid note
+      res.json(item); // pass the note back in json to the client
+    } else { // otherwise
+      next(); // do the next thing
+    }
+  });
 });
 
 app.use(function (req, res, next) {
