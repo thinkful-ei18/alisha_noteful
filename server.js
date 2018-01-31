@@ -22,6 +22,8 @@ app.use(express.static('public'));
 app.use(express.json());
 app.use('/v1', notesRouter);
 
+
+
 /************************************* 
  ERROR HANDLING 
  *************************************/
@@ -43,6 +45,8 @@ app.use(function (err, req, res, next) {
     error: err
   });
 });
+
+
 
 /************************************* 
 LISTENER

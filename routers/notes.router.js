@@ -11,6 +11,8 @@ const data = require('../db/notes');
 const simDB = require('../db/simDB');
 const notes = simDB.initialize(data);
 
+
+
 /************************************* 
 HANDLE ROUTES
  *************************************/
@@ -45,7 +47,7 @@ router.get('/notes/:id', (req, res, next) => {
 });
 
 
-// UPDATE
+// PUT
 router.put('/notes/:id', (req, res, next) => {
   const id = req.params.id;
 
@@ -73,6 +75,31 @@ router.put('/notes/:id', (req, res, next) => {
     }
   });
 });
+
+
+// POST
+router.post('/notes', (req, res, next) => {
+  const newNote = req.body;
+  if (!newNote.title || !newNote.content) {
+    const err = new Error(`Missing either the ${newNote.title} or ${newNote.content}`);
+    err.status = 400;
+    return next(err);
+  }
+
+  notes.create(newNote, (err, note) => {
+    if (err) {
+      return next(err);
+    }
+    if (note) {
+      res.location(`http://${req.headers.host}/notes/${note.id}`).status(201).json(note);
+    }
+    else {
+      next();
+    }
+  });
+});
+
+
 
 /************************************* 
 EXPOSED VARIABLES

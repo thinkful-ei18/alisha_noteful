@@ -31,5 +31,13 @@ const api = {
       data: JSON.stringify(obj),
       success: callback
     });
+  },
+
+  create: function (obj, callback) {
+    $.ajax({
+      url:,
+      method: 'POST',
+      
+    });
   }
 }; 
