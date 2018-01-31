@@ -75,7 +75,7 @@ const noteful = (function () {
         content: editForm.find('.js-note-content-entry').val()
       };
 
-      noteObj.id = store.currentNote.id;
+      noteObj.id = store.currentNote.id; // when an item is clicked on, it changes the value from 'false' to the entire list item object that's currently clicked on
 
       api.update(noteObj.id, noteObj, updateResponse => {
         store.currentNote = updateResponse;
