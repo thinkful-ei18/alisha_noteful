@@ -35,9 +35,14 @@ const api = {
 
   create: function (obj, callback) {
     $.ajax({
-      url:,
+      url: '/v1/notes',
       method: 'POST',
-      
+      data: JSON.stringify(obj),
+      dataType: 'json',
+      contentType: 'application/json',
+      success: callback,
+      error: error => console.log(error)
     });
   }
+
 }; 
