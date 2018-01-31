@@ -66,7 +66,7 @@ const noteful = (function () {
 
   function handleNoteFormSubmit() {
     $('.js-note-edit-form').on('submit', function (event) {
-      event.preventDefault(); // when this is commented out it DOES refresh the page, but may cause other errors down the road.
+      event.preventDefault(); 
 
       const editForm = $(event.currentTarget);
 
@@ -75,25 +75,49 @@ const noteful = (function () {
         content: editForm.find('.js-note-content-entry').val()
       };
 
-      noteObj.id = store.currentNote.id; // when an item is clicked on, it changes the value from 'false' to the entire list item object that's currently clicked on
+      if (store.currentNote) {
 
-      api.update(noteObj.id, noteObj, updateResponse => {
-        store.currentNote = updateResponse;
+        api.update(store.currentNote.id, noteObj, updateResponse => {
+          store.currentNote = updateResponse;
 
-        api.search(store.currentSearchTerm, updateResponse => {
-          store.notes = updateResponse;
+          api.search(store.currentSearchTerm, updateResponse => {
+            store.notes = updateResponse;
+            render();
+          });
 
-          render();
         });
-      });
+
+      } else {
+
+        api.create(noteObj, updateResponse => {
+          store.currentNote = updateResponse;
+
+          api.search(store.currentSearchTerm, updateResponse => {
+            store.notes = updateResponse;
+            render();
+          });
+
+        });
+      }
 
     });
   }
+
+  function handleNoteStartNewSubmit() {
+    $('.js-start-new-note-form').on('submit', event => {
+      event.preventDefault();
+      store.currentNote = false;
+      render();
+    });
+  }
+
+
 
   function bindEventListeners() {
     handleNoteItemClick();
     handleNoteSearchSubmit();
     handleNoteFormSubmit();
+    handleNoteStartNewSubmit();
   }
 
   // This object contains the only exposed methods from this module:

@@ -13,12 +13,13 @@
 </head>
 
 <body>
-  <header>
+  <header role = 'banner'>
     <h1>Noteful</h1>
   </header>
+
   <main>
 
-    <nav class="notes">
+    <nav role ='navigation' class="notes">
       <header>
         <h2>Notes</h2>
         <form id="notes-search-form" class="js-notes-search-form">
@@ -32,7 +33,11 @@
     <article>
       <header>
         <h2>Note</h2>
+        <form id="new-note-form" class="js-start-new-note-form">
+          <button type="submit">new +</button>
+        </form>
       </header>
+      
       <form id="note-edit-form" class="js-note-edit-form">
         <input type="text" name="note-title" class="js-note-title-entry" required placeholder="title">
         <textarea name="note-content" class="js-note-content-entry" placeholder="content"></textarea>
@@ -42,7 +47,7 @@
 
   </main>
 
-  <footer>
+  <footer role = 'footer'>
     Footer
   </footer>
 
