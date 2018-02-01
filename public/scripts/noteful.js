@@ -20,6 +20,7 @@ const noteful = (function () {
     const listItems = list.map(item => `
     <li data-id="${item.id}" class="js-note-element ${currentNote.id === item.id ? 'active' : ''}">
       <a href="#" class="name js-note-show-link">${item.title}</a>
+      <button class="removeBtn js-note-delete-button">X</button>
     </li>`);
     return listItems.join('');
   }
@@ -108,6 +109,13 @@ const noteful = (function () {
       event.preventDefault();
       store.currentNote = false;
       render();
+    });
+  }
+
+  function handleDeleteSelectedNote() {
+    $('.js-notes-list').on('click', event => {
+      event.preventDefault();
+      $('.js-note-delete-button').closest('li');
     });
   }
 

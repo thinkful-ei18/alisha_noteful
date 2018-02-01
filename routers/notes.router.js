@@ -100,6 +100,26 @@ router.post('/notes', (req, res, next) => {
 });
 
 
+// DELETE
+router.delete('/notes/:id', (req, res, next) => {
+  const deletedNote = req.params.id;
+  if (!deletedNote) {
+    const err = new Error("Can't find the note!");
+    err.status = 400;
+    return next(err);
+  }
+
+  notes.delete(deletedNote, (err, note) => {
+    if (err) {
+      return next(err);
+    }
+    if (note) {
+      res.status(204).end();
+    }
+  });
+});
+
+
 
 /************************************* 
 EXPOSED VARIABLES
