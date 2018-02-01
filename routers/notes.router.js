@@ -115,6 +115,7 @@ router.delete('/notes/:id', (req, res, next) => {
     }
     if (note) {
       res.status(204).end();
+      // res.json(note).status(204).end();
     }
   });
 });
