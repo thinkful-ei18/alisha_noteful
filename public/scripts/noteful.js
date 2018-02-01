@@ -117,13 +117,13 @@ const noteful = (function () {
   function handleDeleteSelectedNote() {
     $('.js-notes-list').on('click', '.js-note-delete-button', event => {
       const deletedId = $(event.target).closest('li').data('id');
-      console.log(deletedId);
       api.delete(deletedId)
-        .then(  () => {
-          api.search(store.currentSearchTerm, updateResponse => {
-            store.notes = updateResponse;
-            render();
-          });
+        .then(() => {
+          return api.search(store.currentSearchTerm);
+        })
+        .then(result => {
+          store.notes = result;
+          render();
         });
     });
   }
