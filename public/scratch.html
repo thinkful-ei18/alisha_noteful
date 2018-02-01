@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Page Title</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+  <script type="text/javascript" src="//code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+    crossorigin="anonymous"></script>
+  <script type="text/javascript" src="scripts/api.js"></script>
+  <!-- <script>
+  $(() => {
+    api.details(1005)
+      .then(response => {
+        console.log(response);
+      });
+  }) // shorthand for a $(document).ready() function
+  </script> -->
+
+  <script>
+    $(() => {
+      api.search({currentSearchTerm: 'ways'})
+        .then(response => {
+          console.log(response);
+        });
+    })
+  </script>
+
+  <!-- <script>
+    $(() => {
+      api.update(1000, {title: 'updated Title'})
+        .then(response => {
+          console.log(response);
+        });
+    })
+  </script>
+</body>
+</html> -->

@@ -21,13 +21,20 @@ HANDLE ROUTES
 router.get('/notes', (req, res, next) => {
 
   const queryString = req.query.searchTerm;
-  notes.filter(queryString, (err, list) => {
-    if (err) {
-      return next(err);
-    }
-    res.json(list);
-  });
+  notes.filter(queryString)
+    .then(list => {
+      res.json(list);
+    })
+    .catch(err => next(err));
 });
+
+// notes.filter(queryString, (err, list) => {
+//   if (err) {
+//     return next(err);
+//   }
+//   res.json(list);
+// });
+
 
 router.get('/notes/:id', (req, res, next) => {
   // the URL is always a string! 
@@ -92,8 +99,7 @@ router.post('/notes', (req, res, next) => {
     }
     if (note) {
       res.location(`http://${req.headers.host}/notes/${note.id}`).status(201).json(note);
-    }
-    else {
+    } else {
       next();
     }
   });
@@ -115,7 +121,6 @@ router.delete('/notes/:id', (req, res, next) => {
     }
     if (note) {
       res.status(204).end();
-      // res.json(note).status(204).end();
     }
   });
 });

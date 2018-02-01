@@ -2,6 +2,7 @@
 
 // Simple In-Memory Database (async-callback version)
 const DELAY = 1000;
+const { promisify } = require('util');
 
 const simDB = {
 
@@ -29,7 +30,6 @@ const simDB = {
   },
 
   filter: function (term, callback) {
-
     setTimeout(() => {
       try {
         let list = term ? this.data.filter(item => item.title.includes(term)) : this.data;
@@ -52,23 +52,6 @@ const simDB = {
     }, DELAY);
   },
 
-  replace: function (id, replaceItem, callback) {
-    setTimeout(() => {
-      try {
-        id = Number(id);
-        const index = this.data.findIndex(item => item.id === id);
-        if (index === -1) {
-          return callback(null, null);
-        }
-        replaceItem.id = id;
-        this.data.splice(index, 1, replaceItem);
-        callback(null, replaceItem);
-      } catch (err) {
-        callback(err);
-      }
-    });
-  },
-
   update: function (id, updateItem, callback) {
     setTimeout(() => {
       try {
@@ -77,13 +60,12 @@ const simDB = {
         if (!item) {
           return callback(null, null);
         }
-        Object.assign(item, updateItem); // updates the properties in 'item' with the changed properties in 'updateItem'
+        Object.assign(item, updateItem);
         callback(null, item);
       } catch (err) {
         callback(err);
       }
-    }, 
-    DELAY);
+    }, DELAY);
   },
 
   delete: function (id, callback) {
@@ -105,4 +87,13 @@ const simDB = {
 
 };
 
-module.exports = Object.create(simDB);
+const simDB_Async = {
+  initialize: simDB.initialize,
+  create: promisify(simDB.create),
+  filter: promisify(simDB.filter),
+  find: promisify(simDB.find),
+  update: promisify(simDB.update),
+  delete: promisify(simDB.delete)
+};
+
+module.exports = Object.create(simDB_Async);

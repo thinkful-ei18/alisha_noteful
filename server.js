@@ -20,6 +20,12 @@ app.use(morgan('dev'));
 // create a static webserver
 app.use(express.static('public'));
 app.use(express.json());
+
+
+
+/************************************* 
+ROUTERS
+ *************************************/
 app.use('/v1', notesRouter);
 
 
