@@ -67,10 +67,32 @@ describe('make sure API endpoints are working', function () {
         expect(res.body).to.be.a('array');
         expect(res.body.length).to.be.above(2);
 
-        res.body.forEach(function(note) {
+        res.body.forEach(function (note) {
           expect(note).to.be.a('object');
           expect(note).to.have.all.keys('title', 'content', 'id');
         });
+      });
+  });
+
+
+  it('create a new note with POST', function () {
+    const newNote = {
+      title: 'new note',
+      content: 'new content'
+    };
+
+    return chai.request(app)
+      .post('/v1/notes')
+      .send(newNote) // ??
+      .then(function (res) {
+        expect(res).to.be.json;
+        expect(res).to.have.status(201);
+        expect(res.body).to.be.a('object');
+        expect(res.body).to.have.all.keys('title', 'content', 'id');
+        expect(res.body).to.not.equal(null);
+        expect(res.body).to.deep.equal(Object.assign(newNote, {
+          id: res.body.id
+        }));
       });
   });
 
