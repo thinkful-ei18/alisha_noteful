@@ -98,12 +98,15 @@ const noteful = (function () {
             store.currentNote = updateResponse;
             return api.search(store.currentSearchTerm);
           })
-          .then(result => {
-            store.notes = result;
-            render();
-          });
+          .then(refreshNotes)
+          .catch(err => console.log(err));
       }
     });
+
+    function refreshNotes(response) {
+      store.notes = response;
+      render();
+    }
   }
 
   function handleNoteStartNewSubmit() {
