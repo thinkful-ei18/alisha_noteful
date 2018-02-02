@@ -10,6 +10,10 @@ const expect = chai.expect;
 chai.use(chaiHttp);
 chai.use(chaiSpies);
 
+/************************************* 
+BASE TESTS
+ *************************************/
+
 describe('Reality check', function () {
 
   it('true should be true', function () {
@@ -52,12 +56,16 @@ describe('404 handler', function () {
   });
 });
 
+
+
 /************************************* 
 HTTP METHOD TESTS
  *************************************/
 
-describe('make sure API endpoints are working', function () {
+describe('make sure API endpoints are passing and failing as expected', function () {
 
+
+  // GET succeed/fail tests
   it('return all notes with GET', function () {
     return chai.request(app)
       .get('/v1/notes')
@@ -74,7 +82,15 @@ describe('make sure API endpoints are working', function () {
       });
   });
 
+  describe('404 handler', function () {
 
+    it('should respond with 404 when given a bad path', function () {
+
+    }); 
+  });
+
+
+  // POST succeed/fail tests
   it('create a new note with POST', function () {
     const newNote = {
       title: 'new note',
@@ -94,6 +110,39 @@ describe('make sure API endpoints are working', function () {
           id: res.body.id
         }));
       });
+  });
+
+  describe('404 handler', function () {
+
+    it('should respond with 404 when given a bad path', function () {
+    
+    });
+  });
+
+
+  // PUT succeed/fail tests
+  it('update a note with PUT', function () {
+    
+  });
+
+  describe('404 handler', function () {
+
+    it('should respond with 404 when given a bad path', function () {
+
+    });
+  });
+
+
+  // DELETE succeed/fail tests
+  it('delete a note with DELETE', function () {
+
+  });
+
+  describe('404 handler', function () {
+
+    it('should respond with 404 when given a bad path', function () {
+
+    });
   });
 
 });
