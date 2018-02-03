@@ -11,7 +11,7 @@ chai.use(chaiHttp);
 chai.use(chaiSpies);
 
 /************************************* 
-BASE TESTS
+TEST MAKE SURE NPM IS WORKING
  *************************************/
 
 describe('Reality check', function () {
@@ -25,82 +25,44 @@ describe('Reality check', function () {
   });
 });
 
-
-describe('Express static', function () {
-
-  it('GET request "/" should return the index page', function () {
-    return chai.request(app)
-      .get('/')
-      .then(function (res) {
-        expect(res).to.exist;
-        expect(res).to.have.status(200);
-        expect(res).to.be.html;
-      });
-  });
-});
-
-
-describe('404 handler', function () {
-
-  it('should respond with 404 when given a bad path', function () {
-    const spy = chai.spy();
-    return chai.request(app)
-      .get('/bad/path')
-      .then(spy)
-      .then(() => {
-        expect(spy).to.not.have.been.called();
-      })
-      .catch(err => {
-        expect(err.response).to.have.status(404);
-      });
-  });
-});
-
-
-
-/************************************* 
-HTTP METHOD TESTS
- *************************************/
-
 /*
 
-endpoints:
-'/'
-'/v1'
-'/v1/notes'
-'/v1/notes/id'
+successful tests:
+GET - search - '/v1/notes'
+GET - details - '/v1/notes/id'
+PUT - update - '/v1/notes/id'
+POST - create - '/v1/notes'
+DELETE - delete - '/v1/notes/id'
 
-user actions:
-view all Pnotes
-edit note
-add note
-delete note
-search for notes with title
+bad tests:
+try to get a note with an invalid id
+try to create a note without both completed properties
+try to delete a note with an invalid id
+try to update a note that ...
 
 */
 
-describe('make sure API endpoints are passing and failing as expected', function () {
+/************************************* 
+NOTEFUL ROUTE TESTS
+ *************************************/
 
+/************** GET TESTS **************/
+describe('All GET tests', function() {
 
-  // GET succeed/fail tests
-  it('return all notes with GET', function () {
-    return chai.request(app)
-      .get('/v1/notes')
-      .then(function (res) {
-        expect(res).to.be.json;
-        expect(res).to.have.status(200);
-        expect(res.body).to.be.a('array');
-        expect(res.body.length).to.be.above(2);
-
-        res.body.forEach(function (note) {
-          expect(note).to.be.a('object');
-          expect(note).to.have.all.keys('title', 'content', 'id');
+  describe('Express static', function () {
+    it('GET request "/" should return the index page', function () {
+      return chai.request(app)
+        .get('/')
+        .then(function (res) {
+          expect(res).to.exist;
+          expect(res).to.have.status(200);
+          expect(res).to.be.html;
         });
-      });
+    });
   });
 
-  describe('404 handler', function () {
 
+  describe('404 handler', function () {
     it('should respond with 404 when given a bad path', function () {
       const spy = chai.spy();
       return chai.request(app)
@@ -112,8 +74,56 @@ describe('make sure API endpoints are passing and failing as expected', function
         .catch(err => {
           expect(err.response).to.have.status(404);
         });
-    }); 
+    });
   });
+
+
+  describe('GET from v1/notes', function () {
+
+    it('returns all notes with GET', function () {
+      return chai.request(app)
+        .get('/v1/notes')
+        .then(function (res) {
+          expect(res).to.be.json;
+          expect(res).to.have.status(200);
+          expect(res.body).to.be.a('array');
+          expect(res.body.length).to.be.above(2);
+
+          res.body.forEach(function (note) {
+            expect(note).to.be.a('object');
+            expect(note).to.have.all.keys('title', 'content', 'id');
+          });
+        });
+    });
+
+    it('returns notes based on search query', function() {
+      return chai.request(app)
+        .get('/v1/notes?searchTerm=ways')
+        .then(function (res) {
+          expect(res).to.have.status(200);
+          expect(res).to.be.json;
+          expect(res.body).to.be.a('array');
+          expect(res.body).to.have.length(1);
+          expect(res.body[0]).to.be.an('object');
+          expect(res.body[0].id).to.equal(1005);
+        });
+    });
+
+    it('returns an error because the id is not valid', function() {
+      const spy = chai.spy();
+      return chai.request(app)
+        .get('/v1/notes/9999')
+        .then(spy)
+        .then(() => {
+          expect(spy).to.not.have.been.called();
+        })
+        .catch(err => {
+          expect(err.response).to.have.status(404);
+        });
+    });
+
+  });
+
 
 
   // POST succeed/fail tests
@@ -140,8 +150,27 @@ describe('make sure API endpoints are passing and failing as expected', function
 
   describe('404 handler', function () {
 
-    it('should respond with 404 when given a bad path', function () {
-    
+    it('returns an error if the title and content are not included', function () {
+      const newNote = {
+        title: 'new note',
+        content: 'new content'
+      };
+
+      const spy = chai.spy();
+      return chai.request(app)
+        .post('/v1/notes')
+        .send(newNote)
+        .then(spy)
+        .then(() => {
+          expect(spy).to.not.have.been.called();
+        })
+        .catch((err) => {
+          const res = err.response;
+          expect(res).to.have.status(400);
+          expect(res).to.be.json;
+          expect(res.body).to.be.a('object');
+          expect(res.body.message).to.equal('New notes must contain a title and content');
+        });
     });
   });
 
