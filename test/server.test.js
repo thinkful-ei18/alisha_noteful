@@ -62,6 +62,23 @@ describe('404 handler', function () {
 HTTP METHOD TESTS
  *************************************/
 
+/*
+
+endpoints:
+'/'
+'/v1'
+'/v1/notes'
+'/v1/notes/id'
+
+user actions:
+view all Pnotes
+edit note
+add note
+delete note
+search for notes with title
+
+*/
+
 describe('make sure API endpoints are passing and failing as expected', function () {
 
 
@@ -85,7 +102,16 @@ describe('make sure API endpoints are passing and failing as expected', function
   describe('404 handler', function () {
 
     it('should respond with 404 when given a bad path', function () {
-
+      const spy = chai.spy();
+      return chai.request(app)
+        .get('/bad/path')
+        .then(spy)
+        .then(() => {
+          expect(spy).to.not.have.been.called();
+        })
+        .catch(err => {
+          expect(err.response).to.have.status(404);
+        });
     }); 
   });
 
@@ -121,27 +147,54 @@ describe('make sure API endpoints are passing and failing as expected', function
 
 
   // PUT succeed/fail tests
-  it('update a note with PUT', function () {
-    
+  it.only('update a note with PUT', function () {
+    const updateNote = {
+      title: 'new note',
+      content: 'new content'
+    };
+
+    return chai.request(app)
+      .get('/v1/notes')
+      .then(function(res) {
+        updateNote.id = res.body[0].id;
+
+        return chai.request(app)
+          .put(`/v1/notes/${updateNote.id}`)
+          .send(updateNote);
+      })
+      .then(function(res) {
+        expect(res).to.be.json;
+        expect(res).to.have.status(200);
+        expect(res.body).to.be.a('object');
+        expect(res.body).to.deep.equal(updateNote);
+      });
   });
 
   describe('404 handler', function () {
 
     it('should respond with 404 when given a bad path', function () {
-
+      
     });
   });
 
 
   // DELETE succeed/fail tests
   it('delete a note with DELETE', function () {
-
+    return chai.request(app)
+      .get('/v1/notes')
+      .then(function(res) {
+        return chai.request(app)
+          .delete(`/v1/notes/${res.body[0].id}`);
+      })
+      .then(function(res) {
+        expect(res).to.have.status(204);
+      });
   });
 
   describe('404 handler', function () {
 
     it('should respond with 404 when given a bad path', function () {
-
+      
     });
   });
 

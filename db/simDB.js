@@ -1,7 +1,7 @@
 'use strict';
 
 // Simple In-Memory Database (async-callback version)
-const DELAY = 1000;
+const DELAY = 100; // changed from 1000 so Mocha doesn't time out on server.test.js
 const { promisify } = require('util');
 
 const simDB = {
