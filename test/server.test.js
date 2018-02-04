@@ -44,7 +44,7 @@ try to update a note that ...
 NOTEFUL ROUTE TESTS
  *************************************/
 
-describe('All GET tests', function () {
+describe('GET requests', function () {
 
   it('should return the index page', function () {
     return chai.request(app)
@@ -111,11 +111,10 @@ describe('All GET tests', function () {
       });
   });
 
-  // AssertionError: Target cannot be null or undefined.
   it('should return 404 when trying to get an invalid id', function () {
     const spy = chai.spy();
     return chai.request(app)
-      .get('/v1/notes/55')
+      .get('/v1/notes/1908')
       .then(spy)
       .then(() => {
         expect(spy).to.not.have.been.called();
@@ -129,7 +128,7 @@ describe('All GET tests', function () {
 
 
 
-describe('All PUT tests', function () {
+describe('PUT requests', function () {
 
   it('should update one notes title and/or content', function () {
     const updateNote = {
@@ -159,7 +158,7 @@ describe('All PUT tests', function () {
     };
     const spy = chai.spy();
     return chai.request(app)
-      .put('/v1/notes/55')
+      .put('/v1/notes/1908')
       .send(updateNote)
       .then(spy)
       .then(() => {
@@ -174,7 +173,7 @@ describe('All PUT tests', function () {
 
 
 
-describe('All POST tests', function () {
+describe('POST requests', function () {
 
   it('should create a new note with POST', function () {
     const newNote = {
@@ -197,11 +196,9 @@ describe('All POST tests', function () {
       });
   });
 
-  // AssertionError: Target cannot be null or undefined.
-  it('should return 404 if no title and content', function () {
+  it('should return 400 if no title and content', function () {
     const newNote = {
-      title: 'new note',
-      content: 'new content'
+      title: 'new note'
     };
 
     const spy = chai.spy();
@@ -210,14 +207,16 @@ describe('All POST tests', function () {
       .send(newNote)
       .then(spy)
       .then(() => {
+        console.log('after then', spy);
         expect(spy).to.not.have.been.called();
       })
       .catch(err => {
+        console.log('after err', err);
         const res = err.response;
         expect(res).to.have.status(400);
         expect(res).to.be.json;
         expect(res.body).to.be.a('object');
-        expect(res.body.message).to.equal('New notes must contain a title and content');
+        expect(res.body.message).to.equal('Missing either the `title` or `content`');
       });
   });
 
@@ -225,7 +224,7 @@ describe('All POST tests', function () {
 
 
 
-describe('All DELETE tests', function () {
+describe('DELETE requests', function () {
 
   it('should delete one note', function () {
     return chai.request(app)
@@ -243,7 +242,7 @@ describe('All DELETE tests', function () {
   it('should return 404 when trying to delete a note with an invalid id', function () {
     const spy = chai.spy();
     return chai.request(app)
-      .delete('/v1/notes/55')
+      .delete('/v1/notes/1908')
       .then(spy)
       .then(() => {
         expect(spy).to.not.have.been.called();

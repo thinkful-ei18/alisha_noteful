@@ -38,7 +38,7 @@ router.get('/notes/:id', (req, res, next) => {
       if (item) {
         res.json(item);
       } else {
-        res.json('not found');
+        res.status(404).json('the requested note was not found');
       }
     })
     .catch(err => next(err));
@@ -78,7 +78,7 @@ router.put('/notes/:id', (req, res, next) => {
 router.post('/notes', (req, res, next) => {
   const newNote = req.body;
   if (!newNote.title || !newNote.content) {
-    const err = new Error(`Missing either the ${newNote.title} or ${newNote.content}`);
+    const err = new Error('Missing either the `title` or `content`');
     err.status = 400;
     return next(err);
   }
@@ -87,9 +87,7 @@ router.post('/notes', (req, res, next) => {
     .then(note => {
       if (note) {
         res.location(`http://${req.headers.host}/notes/${note.id}`).status(201).json(note);
-      } else {
-        next();
-      }
+      } 
     })
     .catch(err => next(err));
 });
@@ -100,7 +98,7 @@ router.delete('/notes/:id', (req, res, next) => {
   const deletedNote = req.params.id;
   if (!deletedNote) {
     const err = new Error("Can't find the note!");
-    err.status = 400;
+    err.status = 404;
     return next(err);
   }
 
