@@ -95,17 +95,19 @@ router.post('/notes', (req, res, next) => {
 
 // DELETE
 router.delete('/notes/:id', (req, res, next) => {
-  const deletedNote = req.params.id;
-  if (!deletedNote) {
-    const err = new Error("Can't find the note!");
+  const deletedNoteId = req.params.id;
+  if (!deletedNoteId) {
+    const err = new Error("That note doesn't exist!");
     err.status = 404;
     return next(err);
   }
 
-  notes.delete(deletedNote)
+  notes.delete(deletedNoteId)
     .then(note => {
       if (note) {
         res.status(204).end();
+      } else {
+        next();
       }
     })
     .catch(err => next(err));

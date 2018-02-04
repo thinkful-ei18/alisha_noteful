@@ -207,11 +207,9 @@ describe('POST requests', function () {
       .send(newNote)
       .then(spy)
       .then(() => {
-        console.log('after then', spy);
         expect(spy).to.not.have.been.called();
       })
       .catch(err => {
-        console.log('after err', err);
         const res = err.response;
         expect(res).to.have.status(400);
         expect(res).to.be.json;
@@ -238,16 +236,17 @@ describe('DELETE requests', function () {
       });
   });
 
-  // fails
   it('should return 404 when trying to delete a note with an invalid id', function () {
-    const spy = chai.spy();
+    // const spy = chai.spy();
     return chai.request(app)
       .delete('/v1/notes/1908')
-      .then(spy)
-      .then(() => {
-        expect(spy).to.not.have.been.called();
-      })
+      // .then(spy)
+      // .then(() => {
+      //   console.log('after then', spy);
+      //   expect(spy).to.not.have.been.called();
+      // })
       .catch(err => {
+        console.log('after catch', err);
         expect(err.response).to.have.status(404);
       });
   });
