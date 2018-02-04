@@ -11,6 +11,7 @@ const noteful = (function () {
     const editForm = $('.js-note-edit-form');
     editForm.find('.js-note-title-entry').val(store.currentNote.title);
     editForm.find('.js-note-content-entry').val(store.currentNote.content);
+    $('.js-search-count').text(store.notes.length + ' notes');
   }
 
   /**
@@ -19,8 +20,8 @@ const noteful = (function () {
   function generateNotesList(list, currentNote) {
     const listItems = list.map(item => `
     <li data-id="${item.id}" class="js-note-element ${currentNote.id === item.id ? 'active' : ''}">
-      <a href="#" class="name js-note-show-link">${item.title}</a>
-      <button class="removeBtn js-note-delete-button">X</button>
+      <a href="#note-title" class="name js-note-show-link">${item.title}</a>
+      <button class="removeBtn js-note-delete-button" aria-label="delete">X</button>
     </li>`);
     return listItems.join('');
   }
