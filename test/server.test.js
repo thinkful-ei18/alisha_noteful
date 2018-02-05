@@ -246,7 +246,6 @@ describe('DELETE requests', function () {
       //   expect(spy).to.not.have.been.called();
       // })
       .catch(err => {
-        console.log('after catch', err);
         expect(err.response).to.have.status(404);
       });
   });
