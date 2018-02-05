@@ -53,15 +53,12 @@ router.put('/notes/:id', (req, res, next) => {
   const updateObj = {};
   const updateFields = ['title', 'content'];
 
-
-  // this locates the updated info from the req body
   updateFields.forEach(field => {
     if (field in req.body) {
       updateObj[field] = req.body[field];
     }
   });
 
-  // this passes that updated info to the client
   notes.update(id, updateObj)
     .then(item => {
       if (item) {
