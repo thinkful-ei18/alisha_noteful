@@ -21,3 +21,7 @@ The repo provides several branches to serve as starters, solutions and hints alo
 * **solution/5-testing**: solution for testing and continuous integration
 
 * **solution/6-extra-credit**: solution for converting promises to async-await and additional modularization
+
+
+/**************** CREATE TRAVIS CI BADGE ***************/
+[![Build Status](https://travis-ci.org/thinkful-ei18/alisha_noteful.svg?branch=master)](https://travis-ci.org/thinkful-ei18/alisha_noteful)
